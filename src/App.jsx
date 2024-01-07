@@ -1,17 +1,30 @@
-import './App.css'
+import './App.css';
+import {useState, useEffect} from 'react';
+import ManageLeagues from './components/manager/manageLeagues';
+import { callGetLeagueData } from './callApi.js';
 
 function App() {
+  const [leagueData, setLeagueData] = useState({"leagues":[],"players":[],"games":[]});
+
+  useEffect(() => {
+    async function fetchData() {
+        let jdata = await callGetLeagueData();
+        setLeagueData(jdata);
+      }
+    fetchData();
+  },[]);
 
   return (
-    <>
-      <div className='app'>
-        <p>
-          Hi Carl!
-        </p>
-      </div>
-
-    </>
-  )
+    <div className='app'>
+      <header>
+        { leagueData.error ?
+          <h1>Error Encountered: {leagueData.errorMessage}</h1>
+        :
+          <ManageLeagues leagueData={leagueData} setLeagueData={setLeagueData}/>
+        }
+      </header>
+    </div>
+  );
 }
 
-export default App
+export default App;
