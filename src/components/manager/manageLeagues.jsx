@@ -10,8 +10,8 @@ const ManageLeagues=({leagueData, setLeagueData}) => {
     const [leagueIdForGames, setLeagueIdForGames] = useState(-1); // Set to league id when managing games
     const [addingLeague, setAddingLeague] = useState(false); // Set to true when adding league
     const [showInfo, setShowInfo] = useState(false);
-    const handleSubmitLeague = async(newDesc, newStartDate, newEndDate, newStatus, newGamesPerOpp) => {
-        let newLeagueData = await callAddLeague(newDesc, newStartDate, newEndDate, newStatus, newGamesPerOpp);
+    const handleSubmitLeague = async(newCode, newDesc, newStartDate, newEndDate, newStatus, newGamesPerOpp) => {
+        let newLeagueData = await callAddLeague(newCode, newDesc, newStartDate, newEndDate, newStatus, newGamesPerOpp);
         setLeagueData(newLeagueData);
         setAddingLeague(false);
     }
@@ -19,7 +19,7 @@ const ManageLeagues=({leagueData, setLeagueData}) => {
         setAddingLeague(false);
     }
     const handleUpateLeagueStatus = async(league, newStatus) => {
-        let newLeagueData = await callUpdateLeague(league.id, league.desc, league.startDate, league.endDate, newStatus, league.gamesPerOpp);
+        let newLeagueData = await callUpdateLeague(league.id, league.code, league.desc, league.startDate, league.endDate, newStatus, league.gamesPerOpp);
         setLeagueData(newLeagueData);
     }
     const handleDeleteLeague = async(id) => {
@@ -33,7 +33,7 @@ const ManageLeagues=({leagueData, setLeagueData}) => {
                 <h2>New League</h2>
                 <p>When you add a league it will have a Status of <span className='bold'>{c.ST_REG}</span>.</p>
                 <h2>{c.ST_REG} Status</h2>
-                <p>Players can join themselves to a league with this state.</p>
+                <p>Players can join themselves to a league with this state. They will need to know the Code.</p>
                 <p>Click <span className="material-symbols-outlined">play_arrow</span> to
                     change the Status to <span className='bold'>{c.ST_ACT}</span>.
                 </p>
@@ -51,94 +51,99 @@ const ManageLeagues=({leagueData, setLeagueData}) => {
             </div>
         :
             <div>
-            {leagueData && leagueData.leagues && leagueData.leagues.length ?
-                <div>
-                    <button onClick={() => {setShowInfo(true)}}>Info</button>
-                    <h1>
-                        Leagues
-                    </h1>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Title</th>
-                                <th>Games per Opp</th>
-                                <th>Status / Action</th>
-                                <th className='centerText'>Manage</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {leagueData.leagues.map((league, index) => <tr key={index}>
-                                <td>{league.startDate}</td>
-                                <td>{league.endDate}</td>
-                                <td>{league.desc}</td>
-                                <td className='centerText'>{league.gamesPerOpp}</td>
-                                <td>
-                                    {league.status}
-                                    {league.status === c.ST_REG && <span
-                                        data-bs-toggle='tooltip'
-                                        title='Start the league'
-                                        onClick={() => {handleUpateLeagueStatus(league,c.ST_ACT);}}
-                                        className="material-symbols-outlined">
-                                        play_arrow
-                                    </span>}
-                                    {league.status === c.ST_ACT && <span
-                                        data-bs-toggle='tooltip'
-                                        title='Deactivate back to Registration status'
-                                        onClick={() => {handleUpateLeagueStatus(league,c.ST_REG);}}
-                                        className="material-symbols-outlined">
-                                        undo
-                                    </span>}
-                                    {league.status === c.ST_ACT && <span
-                                        data-bs-toggle='tooltip'
-                                        title='Close the league'
-                                        onClick={() => {handleUpateLeagueStatus(league,c.ST_CLS);}}
-                                        className="material-symbols-outlined">
-                                        stop
-                                    </span>}
-                                    {league.status === c.ST_CLS && <span
-                                        data-bs-toggle='tooltip'
-                                        title='Reactivate the league'
-                                        onClick={() => {handleUpateLeagueStatus(league,c.ST_ACT);}}
-                                        className="material-symbols-outlined">
-                                        undo
-                                    </span>}
-                                    {league.status === c.ST_CLS && <span
-                                        data-bs-toggle='tooltip'
-                                        title='Delete the league'
-                                        onClick={() => {handleDeleteLeague(league.id);}}
-                                        className="material-symbols-outlined">
-                                        delete
-                                    </span>}
-                                </td>
-                                <td>
-                                    <span
-                                        data-bs-toggle='tooltip'
-                                        title='Manage players'
-                                        onClick={() => { setLeagueIdForPlayers(league.id); } }
-                                        className="material-symbols-outlined">
-                                        group
-                                    </span>
-                                    <span
-                                        data-bs-toggle='tooltip'
-                                        title='Manage games'
-                                        onClick={() => { setLeagueIdForGames(league.id); } }
-                                        className="material-symbols-outlined">
-                                        view_list
-                                    </span>
-                                </td>
-                            </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                {!addingLeague &&
+                    <button onClick={() => {setAddingLeague(true)}}>Add League</button>
+                }
+                {leagueData && leagueData.leagues && leagueData.leagues.length ?
+                    <div>
+                        <button onClick={() => {setShowInfo(true)}}>Info</button>
+                        <h1>
+                            Leagues
+                        </h1>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Code</th>
+                                    <th>Title</th>
+                                    <th>Games per Opp</th>
+                                    <th>Status / Action</th>
+                                    <th className='centerText'>Manage</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {leagueData.leagues.map((league, index) => <tr key={index}>
+                                    <td>{league.startDate}</td>
+                                    <td>{league.endDate}</td>
+                                    <td>{league.code}</td>
+                                    <td>{league.desc}</td>
+                                    <td className='centerText'>{league.gamesPerOpp}</td>
+                                    <td>
+                                        {league.status}
+                                        {league.status === c.ST_REG && <span
+                                            data-bs-toggle='tooltip'
+                                            title='Start the league'
+                                            onClick={() => {handleUpateLeagueStatus(league,c.ST_ACT);}}
+                                            className="material-symbols-outlined">
+                                            play_arrow
+                                        </span>}
+                                        {league.status === c.ST_ACT && <span
+                                            data-bs-toggle='tooltip'
+                                            title='Deactivate back to Registration status'
+                                            onClick={() => {handleUpateLeagueStatus(league,c.ST_REG);}}
+                                            className="material-symbols-outlined">
+                                            undo
+                                        </span>}
+                                        {league.status === c.ST_ACT && <span
+                                            data-bs-toggle='tooltip'
+                                            title='Close the league'
+                                            onClick={() => {handleUpateLeagueStatus(league,c.ST_CLS);}}
+                                            className="material-symbols-outlined">
+                                            stop
+                                        </span>}
+                                        {league.status === c.ST_CLS && <span
+                                            data-bs-toggle='tooltip'
+                                            title='Reactivate the league'
+                                            onClick={() => {handleUpateLeagueStatus(league,c.ST_ACT);}}
+                                            className="material-symbols-outlined">
+                                            undo
+                                        </span>}
+                                        {league.status === c.ST_CLS && <span
+                                            data-bs-toggle='tooltip'
+                                            title='Delete the league'
+                                            onClick={() => {handleDeleteLeague(league.id);}}
+                                            className="material-symbols-outlined">
+                                            delete
+                                        </span>}
+                                    </td>
+                                    <td>
+                                        <span
+                                            data-bs-toggle='tooltip'
+                                            title='Manage players'
+                                            onClick={() => { setLeagueIdForPlayers(league.id); } }
+                                            className="material-symbols-outlined">
+                                            group
+                                        </span>
+                                        <span
+                                            data-bs-toggle='tooltip'
+                                            title='Manage games'
+                                            onClick={() => { setLeagueIdForGames(league.id); } }
+                                            className="material-symbols-outlined">
+                                            view_list
+                                        </span>
+                                    </td>
+                                </tr>
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
                 :
                     <h2>No leagues yet</h2>
                 }
             </div>
         }
-        </div>;
+    </div>;
     return(<div>
         { leagueData.error ?
           <h1>Error Encountered: {leagueData.errorMessage}</h1>

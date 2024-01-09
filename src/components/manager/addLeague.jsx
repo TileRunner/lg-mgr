@@ -2,6 +2,7 @@ import {useState} from 'react';
 import * as c from '../../constants';
 
 const AddLeague=({submitData, cancelOperation}) => {
+    const [newCode, setNewCode] = useState("");
     const [newDesc, setNewDesc] = useState("");
     const [newStartDate, setNewStartDate] = useState("");
     const [newEndDate, setNewEndDate] = useState("");
@@ -9,11 +10,12 @@ const AddLeague=({submitData, cancelOperation}) => {
     function handleSubmit(event) {
         event.preventDefault();
         if (isDataAcceptable()) {
-            submitData(newDesc, newStartDate, newEndDate, c.ST_REG, newGamesPerOpp);
+            submitData(newCode, newDesc, newStartDate, newEndDate, c.ST_REG, newGamesPerOpp);
         }
     }
     function isDataAcceptable() {
-        return newDesc.length > 0 && isValidFormat(newDesc) &&
+        return newCode.length > 0 && isValidFormat(newCode) &&
+         newDesc.length > 0 && isValidFormat(newDesc) &&
          newStartDate.length > 0 && isValidDateFormat(newStartDate) &&
          newEndDate.length > 0 && isValidDateFormat(newEndDate);
     }
@@ -41,6 +43,14 @@ const AddLeague=({submitData, cancelOperation}) => {
                 type="text"
                 value={newEndDate}
                 onChange={e => { setNewEndDate(e.target.value); } }
+                />
+        </div>
+        <div>
+            <label>Code:</label>
+            <input
+                type="text"
+                value={newCode}
+                onChange={e => { setNewCode(e.target.value); } }
                 />
         </div>
         <div>

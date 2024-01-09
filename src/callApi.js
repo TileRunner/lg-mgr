@@ -28,6 +28,7 @@ export async function callGetLeagueData() {
 
 /**
  * Add league
+ * @param {string} code League code that players use to gain access
  * @param {string} desc League description
  * @param {string} startDate League start date
  * @param {string} endDate League end date
@@ -36,8 +37,8 @@ export async function callGetLeagueData() {
  * @returns JSON league data or {error: text}
  * @async
  */
-export async function callAddLeague(desc, startDate, endDate, status, gamesPerOpp) {
-    let url = `${baseurl}/AddLeague?desc=${desc}&startDate=${startDate}&endDate=${endDate}&status=${status}&gamesPerOpp=${gamesPerOpp}`;
+export async function callAddLeague(code, desc, startDate, endDate, status, gamesPerOpp) {
+    let url = `${baseurl}/AddLeague?code=${code}&desc=${desc}&startDate=${startDate}&endDate=${endDate}&status=${status}&gamesPerOpp=${gamesPerOpp}`;
     let response = await typicalCall(url);
     return response;
 }
@@ -45,6 +46,7 @@ export async function callAddLeague(desc, startDate, endDate, status, gamesPerOp
 /**
  * Update league
  * @param {int} id League id
+ * @param {string} code League code that players use to gain access
  * @param {string} desc League description
  * @param {string} startDate League start date
  * @param {string} endDate League end date
@@ -53,8 +55,8 @@ export async function callAddLeague(desc, startDate, endDate, status, gamesPerOp
  * @returns JSON league data or {error: text}
  * @async
  */
-export async function callUpdateLeague(id, desc, startDate, endDate, status, gamesPerOpp) {
-    let url = `${baseurl}/UpdateLeague?id=${id}&desc=${desc}&startDate=${startDate}&endDate=${endDate}&status=${status}&gamesPerOpp=${gamesPerOpp}`;
+export async function callUpdateLeague(id, code, desc, startDate, endDate, status, gamesPerOpp) {
+    let url = `${baseurl}/UpdateLeague?id=${id}&code=${code}&desc=${desc}&startDate=${startDate}&endDate=${endDate}&status=${status}&gamesPerOpp=${gamesPerOpp}`;
     let response = await typicalCall(url);
     return response;
 }
