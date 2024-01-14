@@ -5,6 +5,9 @@ import { callGetLeagueData } from './callApi.js';
 
 function App() {
   const [leagueData, setLeagueData] = useState({"leagues":[],"players":[],"games":[]});
+  const myDivScroll = {
+    overflowY: 'auto'
+};
 
   useEffect(() => {
     async function fetchData() {
@@ -15,7 +18,7 @@ function App() {
   },[]);
 
   return (
-    <div className='app'>
+    <div className='app' style={myDivScroll}>
       <header>
         { leagueData.error ?
           <h1>Error Encountered: {leagueData.errorMessage}</h1>
